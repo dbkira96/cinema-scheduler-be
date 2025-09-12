@@ -1,0 +1,610 @@
+openapi: 3.0.1
+info:
+  title: Cinema Scheduler API
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+security:
+  - basicAuth: []
+tags:
+  - name: Schedule
+    description: API di gestione programmazioni
+  - name: Movies
+    description: API di gestione film 
+  - name: Cinema Room
+    description: API per consultare le sale cinema
+  - name: Public
+    description: API pubbliche per la consultazione delle programmazioni
+  - name: TBD Import
+    description: API di importazione dati (admin only)
+paths:
+  /schedule/{id}:
+    get:
+      tags: [Schedule]
+      operationId: getScheduleDTOById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/ScheduleDTO"
+    put:
+      tags: [Schedule]
+      operationId: updateScheduleDTO
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/ScheduleDTO"
+    delete:
+      tags: [Schedule]
+      operationId: deleteScheduleDTO
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /movie/{id}:
+    get:
+      tags: [Movies]
+      operationId: getMovieById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/MovieDto"
+    put:
+      tags: [Movies]
+      operationId: updateMovie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MovieDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/MovieDto"
+    delete:
+      tags: [Movies]
+      operationId: deleteMovie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /schedule:
+    get:
+      tags: [Schedule]
+      operationId: getAllSchedules
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScheduleDTO"
+    post:
+      tags: [Schedule]
+      operationId: addScheduleDTO
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/ScheduleDTO"
+  /movie:
+    get:
+      tags: [Movies]
+      operationId: getAllMovies
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MovieDto"
+    post:
+      tags: [Movies]
+      operationId: addMovie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MovieDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/MovieDto"
+  /management/import:
+    post:
+      tags: [TBD Import]
+      summary: Importazione da Excel (endpoint da definire)
+      description: Questo endpoint è in fase di definizione e potrebbe cambiare. Non utilizzare in produzione.
+      operationId: importExcel
+      parameters:
+        - name: createMovies
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: createRooms
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+      deprecated: true
+  /schedule/page:
+    get:
+      tags: [Schedule]
+      operationId: getScheduleDTOsPage
+      parameters:
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/PageScheduleDTO"
+  /rooms:
+    get:
+      tags: [Cinema Room]
+      summary: Lista di tutte le sale cinema
+      operationId: getAllRooms
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoomDTO"
+  /public/movie-schedule/by-day:
+    get:
+      tags: [Public]
+      operationId: getMovieSchedulesGroupedByDay
+      parameters:
+        - name: start
+          in: query
+          description: Start date (yyyy-MM-dd)
+          required: true
+          schema:
+            type: string
+            format: date
+          example: "2025-09-13"
+        - name: end
+          in: query
+          description: End date (yyyy-MM-dd)
+          required: true
+          schema:
+            type: string
+            format: date
+          example: "2025-09-15"
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DayScheduleDto"
+  /public/movie-schedule/by-date-range:
+    get:
+      tags: [Public]
+      operationId: getMovieSchedulesByDateRange
+      parameters:
+        - name: start
+          in: query
+          description: Start date (yyyy-MM-dd)
+          required: true
+          schema:
+            type: string
+            format: date
+          example: "2025-09-13"
+        - name: end
+          in: query
+          description: End date (yyyy-MM-dd)
+          required: true
+          schema:
+            type: string
+            format: date
+          example: "2025-09-15"
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MovieScheduleDTO"
+  /movie/page:
+    get:
+      tags: [Movies]
+      operationId: getMoviesPage
+      parameters:
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/Pageable"
+      responses:
+        "200":
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/PageMovieDto"
+components:
+  schemas:
+    CinemaRoom:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        capacity:
+          type: integer
+          format: int32
+        technology:
+          type: string
+          enum: [STANDARD, IMAX]
+        createUser:
+          type: string
+        updateUser:
+          type: string
+        createDate:
+          type: string
+          format: date-time
+        updateDate:
+          type: string
+          format: date-time
+    LocalTime:
+      pattern: HH:mm
+      type: object
+      properties:
+        hour:
+          type: integer
+          format: int32
+        minute:
+          type: integer
+          format: int32
+        second:
+          type: integer
+          format: int32
+        nano:
+          type: integer
+          format: int32
+      description: Orario in formato HH:mm
+      example: "19:30"
+    MovieDto:
+      required:
+        - director
+        - duration
+        - title
+      type: object
+      properties:
+        title:
+          maxLength: 255
+          minLength: 1
+          type: string
+          example: "Paprika"
+        director:
+          maxLength: 255
+          minLength: 1
+          type: string
+          example: "Satoshi Kon"
+        duration:
+          minimum: 1
+          type: integer
+          format: int32
+          example: 90
+        releaseDate:
+          type: string
+          format: date
+          example: "2006-11-25"
+        genre:
+          type: string
+          example: "Sci-Fi"
+        image:
+          type: string
+          description: URL dell'immagine del film
+    ScheduleDTO:
+      required:
+        - endDate
+        - movie
+        - room
+        - startDate
+        - time
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        room:
+          $ref: "#/components/schemas/CinemaRoom"
+        movie:
+          $ref: "#/components/schemas/MovieDto"
+        startDate:
+          type: string
+          format: date
+          example: "2025-09-15"
+        endDate:
+          type: string
+          format: date
+          example: "2025-09-15"
+        time:
+          $ref: "#/components/schemas/LocalTime"
+    Pageable:
+      type: object
+      properties:
+        page:
+          minimum: 0
+          type: integer
+          format: int32
+        size:
+          minimum: 1
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            type: string
+    PageScheduleDTO:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScheduleDTO"
+        number:
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          type: array
+          items:
+            $ref: "#/components/schemas/SortObject"
+        unpaged:
+          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+    SortObject:
+      type: object
+      properties:
+        direction:
+          type: string
+        nullHandling:
+          type: string
+        ascending:
+          type: boolean
+        property:
+          type: string
+        ignoreCase:
+          type: boolean
+    RoomDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID della sala
+          format: int64
+        name:
+          type: string
+          description: Nome della sala
+      description: DTO per la sala cinema
+    DayScheduleDto:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        schedules:
+          type: array
+          items:
+            $ref: "#/components/schemas/MovieScheduleDTO"
+    MovieScheduleDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID del film
+          format: int64
+        title:
+          type: string
+          description: Titolo del film
+        rooms:
+          type: array
+          description: Sale e orari di proiezione
+          items:
+            $ref: "#/components/schemas/RoomScheduleDTO"
+        image:
+          type: string
+          description: URL dell'immagine del film
+    RoomScheduleDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID della sala
+          format: int64
+        name:
+          type: string
+          description: Nome della sala
+        times:
+          type: string
+          description: Orari di proiezione (formato HH:mm)
+          example: '["18:30","21:00"]'
+      description: Sale e orari di proiezione
+    PageMovieDto:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/MovieDto"
+        number:
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
