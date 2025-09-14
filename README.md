@@ -7,8 +7,7 @@ Applicazione web per la gestione della programmazione dei film nel multisala Cin
 - Visualizzazione lista film in programmazione
 - Filtri per data di inizio/fine programmazione
 - Consultazione storica delle programmazioni
-- Gestione sale cinema (capienza, tecnologia)
-- API REST per film, sale, programmazioni
+- API CRUD REST per film, sale, programmazioni
 - Endpoint pubblici e protetti (admin)
 - Documentazione API generata automaticamente
 
@@ -41,7 +40,7 @@ Applicazione web per la gestione della programmazione dei film nel multisala Cin
 
 ## Note tecniche
 - Gli id delle entità sono autogenerati.
-- La sicurezza è gestita via autenticazione base (admin/user).
+- La sicurezza è gestita via token JWT.
 - I dati demo sono caricati da `data.sql`.
 - La documentazione OpenAPI è generata in `cinema-scheduler-0.0.1-SNAPSHOT.yaml`.
 
